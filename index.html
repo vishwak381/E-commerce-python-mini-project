@@ -1,67 +1,20 @@
-from flask import Flask, render_template, redirect, url_for, request, session
-from models import db, Product, Order
-from flask_sqlalchemy import SQLAlchemy
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HACKED BY ILANTHIRAIYAN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
-app.config['SECRET_KEY'] = 'your_secret_key'
-db.init_app(app)
+    <h1>Welcome to My Website</h1>
+    <p>This is a simple website made with HTML.</p>
 
-@app.route('/')
-def home():
-    products = Product.query.all()
-    return render_template('home.html', products=products)
+    <h2>About</h2>
+    <p>You can write information about yourself or your site here.</p>
 
-@app.route('/product/<int:product_id>')
-def product_detail(product_id):
-    product = Product.query.get_or_404(product_id)
-    return render_template('product_detail.html', product=product)
+    <h2>Links</h2>
+    <a href="https://www.example.com">Visit Example</a>
 
-@app.route('/add_to_cart/<int:product_id>')
-def add_to_cart(product_id):
-    product = Product.query.get(product_id)
-    if product:
-        cart = session.get('cart', {})
-        cart[product_id] = cart.get(product_id, 0) + 1
-        session['cart'] = cart
-    return redirect(url_for('home'))
-
-@app.route('/cart')
-def cart():
-    cart = session.get('cart', {})
-    products_in_cart = []
-    total_price = 0
-    for product_id, quantity in cart.items():
-        product = Product.query.get(product_id)
-        if product:
-            products_in_cart.append({'product': product, 'quantity': quantity})
-            total_price += product.price * quantity
-    return render_template('cart.html', products_in_cart=products_in_cart, total_price=total_price)
-
-@app.route('/checkout', methods=['POST'])
-def checkout():
-    cart = session.get('cart', {})
-    if not cart:
-        return redirect(url_for('home'))
-    
-    order = Order()
-    db.session.add(order)
-    db.session.commit()
-
-    for product_id, quantity in cart.items():
-        product = Product.query.get(product_id)
-        if product:
-            order_item = OrderItem(order_id=order.id, product_id=product.id, quantity=quantity)
-            db.session.add(order_item)
-    db.session.commit()
-    session.pop('cart', None)
-
-    return redirect(url_for('order_confirmation', order_id=order.id))
-
-@app.route('/order_confirmation/<int:order_id>')
-def order_confirmation(order_id):
-    order = Order.query.get(order_id)
-    return render_template('order_confirmation.html', order=order)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+</body>
+</html>
